@@ -1,0 +1,40 @@
+import pygame
+import pygame.camera
+import pygame.draw
+from pygame.locals import *
+
+DEVICE = '/dev/video0'
+SIZE = (640, 480)
+FILENAME = 'capture.png'
+
+def camstream():
+    pygame.init()
+    pygame.camera.init()
+    display = pygame.display.set_mode(SIZE, 0)
+    camera = pygame.camera.Camera(DEVICE, SIZE)
+    camera.start()
+    screen = pygame.surface.Surface(SIZE, 0, display)
+    capture = True
+    while capture:
+        screen = camera.get_image(screen)
+        # Draw Vertical and Horizontal Lines
+        # line(surface, color, start_pos, end_pos, width) 
+        pygame.draw.line(screen, (153, 255, 51), (319, 0), (319, 479))
+        #pygame.draw.aaline(screen, (0, 0, 255), (639, 0), (0, 479))
+        pygame.draw.aaline(screen, (255, 51, 255), (0, 239), (639, 239))
+        #Draw Circle
+        #circle(surface, color, center, radius, width=0)
+        pygame.draw.circle(screen, (0,255,255), (319, 239), 15, 1)
+        display.blit(screen, (0,0))
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                capture = False
+            elif event.type == KEYDOWN and event.key == K_s:
+                pygame.image.save(screen, FILENAME)
+    camera.stop()
+    pygame.quit()
+    return
+
+if __name__ == '__main__':
+    camstream()
